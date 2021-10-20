@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <canvas id='canvas' width="500" height="500"></canvas>
+  <canvas id='canvas' width="1500" height="1500"></canvas>
 
   <script src='index.js'></script>
   <script>
@@ -18,19 +18,18 @@
     let eCanvas = new ECanvas(canvas)
 
     //创建矩形
-    let rect = new ERect(10, 300, 10, 10, 'fill', 'red')
-
-    //初始化运动属性
+    let rect = new ERect(10, 10, 100, 100, 'fill', 'red')
     rect.initMove({
-      Vx: 5,
-      Vy: -7,
+      Vx: 3,
       Fy: 0.1
     })
-    //将矩形挂载到eCanvas画布上
     eCanvas.toBind(rect)
-
-    //rect运动
-    rect.move()
+    rect.moveTo({
+      y: 1000
+    }, () => {
+      rect.initMove()
+      console.log(rect);
+    })
 
     //渲染
     eCanvas.drow()

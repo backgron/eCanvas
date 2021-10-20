@@ -28,10 +28,17 @@ class ECanvas {
     }
   }
 
-  //向画布中挂在对象
+  //向画布中挂载对象
   toBind(ele) {
     ele.ctx = this.ctx
+    ele.bind = true
     this.elements.push(ele)
+  }
+
+  //解除挂载
+  removeBind(ele) {
+    ele.ctx = null
+    ele.bind = false
   }
 
   // 页面渲染入口
@@ -39,6 +46,10 @@ class ECanvas {
     let animate = () => {
       this.ctx.clearRect(0, 0, this.w, this.h)
       for (let i = 0; i < this.elements.length; i++) {
+        if (!this.elements[i].bind) {
+          this.elements.splice(i, 1)
+          continue
+        }
         this.elements[i].drow()
       }
       this.rafId.push(window.requestAnimationFrame(animate))
@@ -58,6 +69,7 @@ class ECanvas {
     Fx：元素沿 x 轴的受力
     Fy：元素沿着 y 轴的受力
     m： 元素的相对质量
+    bind: 是否已经挂在到 ECanvas 上
  * 
 */
 class MoveElement {
@@ -71,6 +83,7 @@ class MoveElement {
     this.m = m
     this.timeId = []
     this.rafId = []
+    this.bind = true
   }
 
   //初始化运动属性
@@ -80,13 +93,17 @@ class MoveElement {
         this[key] = config[key]
       }
     }
-    if (this instanceof ERect && this.Mx === 0 && this.My === 0) {
-      this.Mx = this.x + (this.w) / 2
-      this.My = this.y + (this.y) / 2
-    } else if (this instanceof EArc) {
-      this.Mx = this.r
-      this.My = this.r
-    }
+    // 监听运动中心
+    this.timeId.push(setInterval(() => {
+      if (this instanceof ERect) {
+        this.Mx = this.x + (this.w) / 2
+        this.My = this.y + (this.h) / 2
+      } else if (this instanceof EArc) {
+        this.Mx = this.r
+        this.My = this.r
+      }
+    }), 1)
+
   }
 
   //开始按照属性运动
@@ -106,9 +123,8 @@ class MoveElement {
   moveTo(stopConfig, callback) {
     this.move()
     this.timeId.push(setInterval(() => {
-      console.log('moveto');
       for (let key in stopConfig) {
-        if (stopConfig[key] > this[key] - 10 && stopConfig[key] < this[key] + 10) {
+        if (stopConfig[key] > this[key] - 2 * (this.Vx + this.Vy) && stopConfig[key] < this[key] + 2 * (this.Vx + this.Vy)) {
           this[key] = stopConfig[key]
           this.stop()
           if (callback) {
@@ -125,6 +141,15 @@ class MoveElement {
     for (let i = 0; i < this.timeId.length; i++) {
       clearInterval(this.timeId[i])
     }
+    //计算运动中心
+    if (this instanceof ERect) {
+      this.Mx = this.x + (this.w) / 2
+      this.My = this.y + (this.h) / 2
+    } else if (this instanceof EArc) {
+      this.Mx = this.r
+      this.My = this.r
+    }
+
     this.timeId = []
     this.Vx = 0
     this.Vy = 0
@@ -195,9 +220,9 @@ class ERect extends MoveElement {
     if (this.shape === 'fill') {
       this.ctx.fillStyle = this.color
       this.ctx.fillRect(this.x, this.y, this.w, this.h)
-    } else if (this.shape === 'storke') {
-      this.ctx.storkeStyle = this.color
-      this.ctx.storkeRect(this.x, this.y, this.w, this.h)
+    } else if (this.shape === 'stroke') {
+      this.ctx.strokeStyle = this.color
+      this.ctx.strokeRect(this.x, this.y, this.w, this.h)
     }
   }
 }
