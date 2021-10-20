@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id='canvas' width="500" height="500"></canvas>
+
+  <script src='index.js'></script>
+  <script>
+    //创建eCanvas对象
+    let canvas = document.querySelector('#canvas')
+    let eCanvas = new ECanvas(canvas)
+
+    //创建矩形
+    let rect = new ERect(10, 300, 10, 10, 'fill', 'red')
+
+    //初始化运动属性
+    rect.initMove({
+      Vx: 5,
+      Vy: -7,
+      Fy: 0.1
+    })
+    //将矩形挂载到eCanvas画布上
+    eCanvas.toBind(rect)
+
+    //rect运动
+    rect.move()
+
+    //渲染
+    eCanvas.drow()
+  </script>
+</body>
+
+</html>

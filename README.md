@@ -28,7 +28,7 @@ npm install ECanvas
 
 起步：我们将通过简短的代码，介绍`eCanvas`的基本使用，其中一些API将会在后期进行详细的介绍与解释，下面的例子为创建一个做斜上抛运动的方块。
 
-+ 再`HTML`中创建 `canvas`标签
++ 在`HTML`中创建 `canvas`标签
 
   ```html
   <canvas id='canvas' width="500" height="500"></canvas>
