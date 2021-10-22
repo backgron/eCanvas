@@ -11,21 +11,44 @@
 class ECanvas {
   constructor(canvas) {
     this.canvas = canvas
-    this.w = canvas.width
-    this.h = canvas.height
-    this.ctx = this.getCtx()
+    this.w = 0
+    this.h = 0
+    this.ctx = null
     this.elements = []
     this.timeId = []
     this.rafId = []
+
+    this.init()
   }
 
-  //获取上下文对象
-  getCtx() {
+  init() {
+    //绑定 w
+    Object.defineProperty(this, 'w', {
+      set: function (value) {
+        this.canvas.width = value
+      },
+      get: function () {
+        return this.canvas.width
+      }
+    })
+
+    //绑定 h
+    Object.defineProperty(this, 'h', {
+      set: function (value) {
+        this.canvas.height = value
+      },
+      get: function () {
+        return this.canvas.height
+      }
+    })
+
+    //获取上下文对象
     if (this.canvas.getContext) {
-      return this.canvas.getContext('2d')
+      this.ctx = this.canvas.getContext('2d')
     } else {
       console.error('您的浏览器不支持 "<canvas>" 标签')
     }
+
   }
 
   //向画布中挂载对象
@@ -73,9 +96,9 @@ class ECanvas {
  * 
 */
 class MoveElement {
-  constructor(Mx = 0, My = 0, Vx = 0, Vy = 0, Fx = 0, Fy = 0, m = 1) {
-    this.Mx = Mx
-    this.My = My
+  constructor(Vx = 0, Vy = 0, Fx = 0, Fy = 0, m = 1) {
+    this.Mx = 0
+    this.My = 0
     this.Vx = Vx
     this.Vy = Vy
     this.Fx = Fx
@@ -84,6 +107,28 @@ class MoveElement {
     this.timeId = []
     this.rafId = []
     this.bind = true
+
+    this.init()
+  }
+
+  init() {
+    Object.defineProperty(this, 'Mx', {
+      set: function (value) {
+        console.error('Mx属性为只读属性');
+      },
+      get: function () {
+        return this.x + (this.w) / 2
+      }
+    })
+
+    Object.defineProperty(this, 'My', {
+      set: function (value) {
+        console.error('My属性为只读属性');
+      },
+      get: function () {
+        return this.y + (this.h) / 2
+      }
+    })
   }
 
   //初始化运动属性
@@ -93,17 +138,6 @@ class MoveElement {
         this[key] = config[key]
       }
     }
-    // 监听运动中心
-    this.timeId.push(setInterval(() => {
-      if (this instanceof ERect) {
-        this.Mx = this.x + (this.w) / 2
-        this.My = this.y + (this.h) / 2
-      } else if (this instanceof EArc) {
-        this.Mx = this.r
-        this.My = this.r
-      }
-    }), 1)
-
   }
 
   //开始按照属性运动
@@ -140,14 +174,6 @@ class MoveElement {
   stop(callback) {
     for (let i = 0; i < this.timeId.length; i++) {
       clearInterval(this.timeId[i])
-    }
-    //计算运动中心
-    if (this instanceof ERect) {
-      this.Mx = this.x + (this.w) / 2
-      this.My = this.y + (this.h) / 2
-    } else if (this instanceof EArc) {
-      this.Mx = this.r
-      this.My = this.r
     }
 
     this.timeId = []
@@ -202,7 +228,13 @@ class MoveElement {
 }
 
 /**可控矩形ERect
- * 
+ * 属性：
+ *  x：矩形左上角x坐标
+ *  y：矩形左上角y坐标
+ *  w：矩形宽度
+ *  h：矩形高度
+ *  shape：矩形实心（fill）或者空心（stroke）
+ *  color：矩形颜色
  */
 class ERect extends MoveElement {
   constructor(x, y, w, h, shape = 'fill', color = '#000') {
