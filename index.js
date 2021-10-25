@@ -2,6 +2,8 @@
  * eCanvas 入口类
  *  属性：
  *    canvas：DOM 树中的 canvas 元素
+ *    w:canvas的宽度
+ *    h:canvas的高度
  *    ctx：canvas 对应的上下文对象
  *    element：canvas 索要渲染的所有对象
  *    timeId: ECanvas 下所有定时器的 ID
@@ -60,8 +62,12 @@ class ECanvas {
 
   //解除挂载
   removeBind(ele) {
-    ele.ctx = null
-    ele.bind = false
+    if (ele) {
+      ele.ctx = null
+      ele.bind = false
+    } else {
+      console.warn(ele + '对象已不存在');
+    }
   }
 
   // 页面渲染入口

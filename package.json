@@ -1,0 +1,19 @@
+{
+  "name": "ecanvas",
+  "version": "1.0.0",
+  "description": "ECanvas:用于构建canvas可控动画的JavaScript库",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backgron/eCanvas.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/backgron/eCanvas/issues"
+  },
+  "homepage": "https://github.com/backgron/eCanvas#readme"
+}

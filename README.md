@@ -8,7 +8,7 @@
 
 eCanvas是基于`JavaScript`通过`HTML5`中`canvas`标签构建`canvas`可控动画的JS库。通过eCanvas可以大大提高`canvas`相关功能（例如：canvas动画，canvas图片，基于canvas的H5游戏）开发的开发速度。在学习`eCanvas`的使用之前，需要先了解基本的`HTML`，`JavaScript`的基础知识。如果需要深入学习`eCanvas`的实现原理，请转到 eCanvas运行原理 。
 
-### 安装
+### 安装 （开发中...）
 
 + 方法一：通过html 的script 引入资源库
 
@@ -19,7 +19,7 @@ eCanvas是基于`JavaScript`通过`HTML5`中`canvas`标签构建`canvas`可控�
 + 方法二：通过npm安装
 
 ```npm
-npm install ECanvas
+npm install ecanvas
 ```
 
 ### 起步
@@ -122,7 +122,19 @@ let rect = new ERect(10, 300, 10, 10, 'fill', 'red')
   | timeID   | Array                    | 否       | []     | 存放ECanvas对象创建的定时器（setInterval）ID                 |
   | rafID    | Array                    | 否       | []     | 存放ECanvas对象创建的请求动画关键帧（requestAnimationFrame) ID |
 
+  注：对象的宽度 `w` 和高度 `h` 为`canvas`标签的绑定属性，绑定后的`eCanvas`对象属性会随着DOM中的`canvas`的宽高而变化，反之亦然。
+
 + 对象的方法
+
+  | 方法名          | 参数                    | 返回值 | 描述                                |
+  | --------------- | ----------------------- | ------ | ----------------------------------- |
+  | toBind(ele)     | ele(可控元素对象Object) | 无     | 向画布中挂载对象(参与渲染）         |
+  | removeBind(ele) | ele(可控元素对象Object) | 无     | 解除画布中对象的挂载(不再参与渲染） |
+  | drow()          | 无                      | 无     | 开始渲染画布中的所有对象            |
+
+  
+
+  
 
   
 
