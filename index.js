@@ -124,8 +124,7 @@ class MoveShape {
     //是否绑定在canvas画布上
     this.bind = false
 
-    //碰撞信息
-    this.hitType = 'AABB'
+    //层级信息
     this.zIndex = 1
   }
 
@@ -200,7 +199,6 @@ class MoveShape {
           break
         case key[1]:
           this.Vx = v
-
           break
         case key[2]:
           this.Vy = v
@@ -262,6 +260,9 @@ class ERect extends MoveShape {
     this.pointM
     this.direction = 0
 
+    //碰撞信息
+    this.hitType = 'AABB'
+
 
 
     this.init()
@@ -272,6 +273,12 @@ class ERect extends MoveShape {
     this.pointM = 'leftTop'
     this.setPoints()
     console.log(this);
+
+    Object.defineProperty(this, 'hitType', {
+      get: function () {
+        return this.direction % Math.PI / 2 === 0 ? 'AABB' : 'Rect'
+      }
+    })
   }
 
   //同步位置信息
@@ -467,7 +474,55 @@ class EArc extends MoveShape {
   }
 }
 
-/**碰撞检测 */
-class IsHit {
 
+
+//公用方法
+//获取向量
+function getVector(point1, point2) {
+  return [point2[0] - point1[0], point2[1] - point1[1]]
+}
+//点乘向量
+function dot(vector1, vector2) {
+  return vector1[0] * vector2[0] + vector1[1] * vector2[1]
+}
+//叉乘向量
+function cross(vector1, vector2) {
+  return vector1[0] * vector2[1] - vector1[1] * vector2[0]
+}
+
+//点到线段的最短距离 平方
+function pointToLine(point, linePoint1, linePoint2) {
+  //直线向量
+  let lineVector = getVector(linePoint1, linePoint2)
+  //点积 
+  let m = dot(getVector(linePoint1, point), lineVector)
+  let n = dot(lineVector, lineVector)
+  if (m <= 0) {
+    return pointToPoint(linePoint1, point)
+  } else if (m >= n) {
+    return pointToPoint(linePoint2, point)
+  } else {
+    console.log(pointToPoint(linePoint1, point), m);
+    return (pointToPoint(linePoint1, point) - m * m)
+
+  }
+}
+//点到点距离的平方
+function pointToPoint(point1, point2) {
+  return (point1[0] - point2[0]) * (point1[0] - point2[0]) + (point1[1] - point2[1]) * (point1[1] - point2[1])
+}
+
+//碰撞检测   不好用  有bug
+function isHit(element1, element2) {
+  if (element1.hitType === 'AABB' && element2.hitType === 'AABB') {
+    let minX = Math.max(element1.pointO[0], element2.pointO[0])
+    let minY = Math.max(element1.pointO[1], element2.pointO[1])
+    let maxX = Math.min(element1.pointO[0] + element1.width, element1.pointO[1] + element2.width)
+    let maxY = Math.min(element2.pointO[0] + element1.height, element2.pointO[1] + element2.height)
+
+    if (minX < maxX && minY < maxY) {
+      return true
+    }
+    return false
+  }
 }
