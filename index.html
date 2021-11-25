@@ -29,9 +29,12 @@
 
     let rect = new ERect(100, 100, 100, 100, 'fill', 'red')
     let rect2 = new ERect(300, 300, 100, 100, 'fill', 'green')
+    rect.zIndex = 1
+    rect2.zIndex = 0
     eCanvas.toBind(rect)
     eCanvas.toBind(rect2)
     rect.rotate(Math.PI / 4, 'middle')
+
     rect.moveByKey(1)
 
     eCanvas.drow();

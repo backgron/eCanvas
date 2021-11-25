@@ -16,7 +16,11 @@ class ECanvas {
     this.w = 0
     this.h = 0
     this.ctx = null
-    this.elements = []
+    this.elements = [
+      [],
+      [],
+      []
+    ]
     this.timeId = []
     this.rafId = []
 
@@ -55,9 +59,11 @@ class ECanvas {
 
   //向画布中挂载对象
   toBind(ele) {
-    ele.ctx = this.ctx
-    ele.bind = true
-    this.elements.push(ele)
+    if (ele && !ele.bind) {
+      ele.ctx = this.ctx
+      ele.bind = true
+      this.elements[ele.zIndex].push(ele)
+    }
   }
 
   //解除挂载
@@ -75,11 +81,13 @@ class ECanvas {
     let animate = () => {
       this.ctx.clearRect(0, 0, this.w, this.h)
       for (let i = 0; i < this.elements.length; i++) {
-        if (!this.elements[i].bind) {
-          this.elements.splice(i, 1)
-          continue
+        for (let j = 0; j < this.elements[i].length; j++) {
+          if (!this.elements[i][j].bind) {
+            this.elements[i].splice(j, 1)
+            continue
+          }
+          this.elements[i][j].drow()
         }
-        this.elements[i].drow()
       }
       this.rafId.push(window.requestAnimationFrame(animate))
     }
@@ -114,7 +122,11 @@ class MoveShape {
     this.timeId = []
     this.rafId = []
     //是否绑定在canvas画布上
-    this.bind = true
+    this.bind = false
+
+    //碰撞信息
+    this.hitType = 'AABB'
+    this.zIndex = 1
   }
 
 
@@ -249,6 +261,8 @@ class ERect extends MoveShape {
     this.matrix
     this.pointM
     this.direction = 0
+
+
 
     this.init()
 
