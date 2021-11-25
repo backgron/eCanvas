@@ -6,6 +6,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+    body {
+      overflow: hidden;
+      /* background-color: pink; */
+    }
+
+    canvas {
+      background-color: pink;
+    }
+  </style>
 </head>
 
 <body>
@@ -17,26 +27,14 @@
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
-    //创建矩形
-    let rect = new ERect(10, 10, 100, 100, 'fill', 'red')
-    rect.initMove({
-      Vx: 3,
-      Fy: 0.1
-    })
+    let rect = new ERect(100, 100, 100, 100, 'fill', 'red')
+    let rect2 = new ERect(300, 300, 100, 100, 'fill', 'green')
     eCanvas.toBind(rect)
-    rect.moveTo({
-      y: 1000
-    }, () => {
-      rect.initMove()
-      console.log(rect);
-    })
+    eCanvas.toBind(rect2)
+    rect.rotate(Math.PI / 4, 'middle')
+    rect.moveByKey(1)
 
-    setInterval(function () {
-      console.log(rect.Mx, rect.My);
-    }, 10)
-
-    //渲染
-    eCanvas.drow()
+    eCanvas.drow();
   </script>
 </body>
 

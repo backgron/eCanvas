@@ -66,7 +66,7 @@ class ECanvas {
       ele.ctx = null
       ele.bind = false
     } else {
-      console.warn(ele + '对象已不存在');
+      console.warn(ele + '对象不存在');
     }
   }
 
@@ -101,41 +101,22 @@ class ECanvas {
     bind: 是否已经挂在到 ECanvas 上
  * 
 */
-class MoveElement {
+class MoveShape {
   constructor(Vx = 0, Vy = 0, Fx = 0, Fy = 0, m = 1) {
-    this.Mx = 0
-    this.My = 0
+    //元素运动信息
     this.Vx = Vx
     this.Vy = Vy
     this.Fx = Fx
     this.Fy = Fy
     this.m = m
+
+    //元素定时器
     this.timeId = []
     this.rafId = []
+    //是否绑定在canvas画布上
     this.bind = true
-
-    this.init()
   }
 
-  init() {
-    Object.defineProperty(this, 'Mx', {
-      set: function (value) {
-        console.error('Mx属性为只读属性');
-      },
-      get: function () {
-        return this.x + (this.w) / 2
-      }
-    })
-
-    Object.defineProperty(this, 'My', {
-      set: function (value) {
-        console.error('My属性为只读属性');
-      },
-      get: function () {
-        return this.y + (this.h) / 2
-      }
-    })
-  }
 
   //初始化运动属性
   initMove(config) {
@@ -181,7 +162,10 @@ class MoveElement {
     for (let i = 0; i < this.timeId.length; i++) {
       clearInterval(this.timeId[i])
     }
-
+    for (let i = 0; i < this.rafId.length; i++) {
+      window.cancelAnimationFrame(this.rafId[i])
+    }
+    this.rafId = []
     this.timeId = []
     this.Vx = 0
     this.Vy = 0
@@ -193,23 +177,26 @@ class MoveElement {
   }
 
   //通过键盘上下左右运动
-  moveByKey(v, callback) {
+  moveByKey(v, key = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'], callback) {
     if (callback) {
       callback()
     }
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
-        case 'ArrowUp':
+        case key[0]:
           this.Vy = -v
           break
-        case 'ArrowDown':
-          this.Vy = v
-          break
-        case 'ArrowLeft':
-          this.Vx = -v
-          break
-        case 'ArrowRight':
+        case key[1]:
           this.Vx = v
+
+          break
+        case key[2]:
+          this.Vy = v
+
+          break
+        case key[3]:
+          this.Vx = -v
+
           break
       }
     })
@@ -242,25 +229,209 @@ class MoveElement {
  *  shape：矩形实心（fill）或者空心（stroke）
  *  color：矩形颜色
  */
-class ERect extends MoveElement {
-  constructor(x, y, w, h, shape = 'fill', color = '#000') {
+class ERect extends MoveShape {
+  constructor(x, y, width, height, style = 'fill', color = '#000') {
     super()
+    //rect 基础属性
     this.x = x
     this.y = y
-    this.w = w
-    this.h = h
-    this.shape = shape
+    this.width = width
+    this.height = height
     this.color = color
     this.ctx = null
+    this.style = style
+
+    //位置信息
+    this.pointO
+    this.pointX
+    this.pointY
+    this.pointXY
+    this.matrix
+    this.pointM
+    this.direction = 0
+
+    this.init()
+
+  }
+  //初始化信息
+  init() {
+    this.pointM = 'leftTop'
+    this.setPoints()
+    console.log(this);
   }
 
+  //同步位置信息
+  setPoints() {
+    Object.defineProperty(this, 'matrix', {
+      get: function () {
+        switch (this.pointM) {
+          case 'middle':
+            return this.matrix = [
+              [-this.width / 2 * Math.cos(this.direction), -this.width / 2 * Math.sin(this.direction),
+                this
+                .x
+              ],
+              [-this.height / 2 * Math.sin(this.direction), -this.height / 2 * Math.cos(this.direction),
+                this
+                .y
+              ],
+              [0, 0, this.direction]
+            ]
+          case 'leftTop':
+            return this.matrix = [
+              [this.width * Math.cos(this.direction), this.width * Math.sin(this.direction), this.x],
+              [-this.height * Math.sin(this.direction), this.height * Math.cos(this.direction), this.y],
+              [0, 0, this.direction]
+            ]
+          case 'rightTop':
+            return this.matrix = [
+              [(-this.width) * Math.cos(this.direction), (-this.width) * Math.sin(this.direction), this
+                .x
+              ],
+              [-this.height * Math.sin(this.direction), this.height * Math.cos(this.direction), this.y],
+              [0, 0, this.direction]
+            ]
+          case 'leftBottom':
+            return this.matrix = [
+              [this.width * Math.cos(this.direction), this.width * Math.sin(this.direction), this.x],
+              [this.height * Math.sin(this.direction), -this.height * Math.cos(this.direction), this.y],
+              [0, 0, this.direction]
+            ]
+          case 'rightBottom':
+            return this.matrix = [
+              [-this.width * Math.cos(this.direction), -this.width * Math.sin(this.direction), this.x],
+              [this.height * Math.sin(this.direction), -this.height * Math.cos(this.direction), this.y],
+              [0, 0, this.direction]
+            ]
+        }
+      },
+      set: function () {
+
+      }
+    })
+    Object.defineProperty(this, 'pointO', {
+      get: function () {
+        switch (this.pointM) {
+          case 'middle':
+            return [(-this.width / 2) * Math.cos(this.direction) - (-this.height / 2) * Math.sin(this
+                .direction) + this.x, (-this.width / 2) * Math.sin(this.direction) + (-this.height / 2) *
+              Math
+              .cos(this
+                .direction) + this.y
+            ]
+          case 'leftTop':
+            return [this.x, this.y]
+          case 'rightTop':
+            return [this.matrix[0][0] + this.x + this.width, this.matrix[0][1] + this.y]
+          case 'leftBottom':
+            return [this.matrix[1][0] + this.x, this.matrix[1][1] + this.y + this.height]
+          case 'rightBottom':
+            return [-this.width * Math.cos(this.direction) + this.height * Math.sin(this.direction) + this
+              .x +
+              this.width,
+              -this.height * Math.cos(this.direction) - this.width * Math.sin(this.direction) + this.y +
+              this
+              .height
+            ]
+        }
+      }
+    })
+    Object.defineProperty(this, 'pointX', {
+      get: function () {
+        switch (this.pointM) {
+          case 'middle':
+            return [(this.width / 2) * Math.cos(this.direction) - (-this.height / 2) * Math.sin(this
+                .direction) + this.x,
+              (this.width / 2) * Math.sin(this.direction) + (-this.height / 2) * Math.cos(this
+                .direction) +
+              this.y
+            ]
+          case 'leftTop':
+            return [this.matrix[0][0] + this.x, this.matrix[0][1] + this.y]
+          case 'rightTop':
+            return [this.width + this.x, this.y]
+          case 'leftBottom':
+            return [this.width * Math.cos(this.direction) + this.height * Math.sin(this.direction) + this.x,
+              -this.height * Math.cos(this.direction) + this.width * Math.sin(this.direction) + this.y +
+              this
+              .height
+            ]
+          case 'rightBottom':
+            return [this.matrix[1][0] + this.x + this.width, this.matrix[1][1] + this.y + this.height]
+        }
+
+      }
+    })
+    Object.defineProperty(this, 'pointY', {
+      get: function () {
+        switch (this.pointM) {
+          case 'middle':
+            return [(-this.width / 2) * Math.cos(this.direction) - (this.height / 2) * Math.sin(this
+                .direction) + this.x,
+              (-this.width / 2) * Math.sin(this.direction) + (this.height / 2) * Math.cos(this
+                .direction) +
+              this.y
+            ]
+          case 'leftTop':
+            return [this.matrix[1][0] + this.x, this.matrix[1][1] + this.y]
+          case 'rightTop':
+            return [-this.width * Math.cos(this.direction) - this.height * Math.sin(this.direction) + this
+              .x +
+              this.width,
+              this.height * Math.cos(this.direction) + (-this.width) * Math.sin(this.direction) + this.y
+            ]
+          case 'leftBottom':
+            return [this.x, this.y + this.height]
+          case 'rightBottom':
+            return [this.matrix[0][0] + this.x + this.width, this.matrix[0][1] + this.y + this.height]
+        }
+      }
+    })
+    Object.defineProperty(this, 'pointXY', {
+      get: function () {
+        switch (this.pointM) {
+          case 'middle':
+            return [(this.width / 2) * Math.cos(this.direction) - (this.height / 2) * Math.sin(this
+                .direction) +
+              this.x,
+              (this.width / 2) * Math.sin(this.direction) + (this.height / 2) * Math.cos(this.direction) +
+              this.y
+            ]
+          case 'leftTop':
+            return [this.width * Math.cos(this.direction) - this.height * Math.sin(this.direction) + this.x,
+              this.height * Math.cos(this.direction) + this.width * Math.sin(this.direction) + this.y
+            ]
+          case 'rightTop':
+            return [this.matrix[1][0] + this.x + this.width, this.matrix[1][1] + this.y]
+          case 'leftBottom':
+            return [this.matrix[0][0] + this.x, this.matrix[0][1] + this.y + this.height]
+          case 'rightBottom':
+            return [this.x + this.width, this.y + this.height]
+        }
+      }
+    })
+  }
+
+  //控制旋转的方法
+  rotate(direction, pointM = 'middle') {
+    this.direction = direction
+    this.pointM = pointM
+  }
+
+  //绘画的方法
   drow() {
-    if (this.shape === 'fill') {
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.pointO[0], this.pointO[1])
+    this.ctx.lineTo(this.pointX[0], this.pointX[1])
+    this.ctx.lineTo(this.pointXY[0], this.pointXY[1])
+    this.ctx.lineTo(this.pointY[0], this.pointY[1])
+    this.ctx.lineTo(this.pointO[0], this.pointO[1])
+    if (this.style === 'fill') {
       this.ctx.fillStyle = this.color
-      this.ctx.fillRect(this.x, this.y, this.w, this.h)
-    } else if (this.shape === 'stroke') {
+      this.ctx.fill()
+    } else if (this.style === 'stroke') {
       this.ctx.strokeStyle = this.color
-      this.ctx.strokeRect(this.x, this.y, this.w, this.h)
+      this.ctx.stroke()
     }
   }
 }
@@ -269,9 +440,16 @@ class ERect extends MoveElement {
  * 
  * 
  */
-class EArc extends MoveElement {
-  constructor() {
-
+class EArc extends MoveShape {
+  constructor(x, y, radius, startAngle, endAngle, direction, shape = 'fill', color = '#000') {
+    this.x = x
+    this.y = y
+    this.radius = radius
+    this.startAngle = startAngle
+    this.endAngle = endAngle
+    this.direction = direction
+    this.shape = shape
+    this.color = color
   }
 }
 
