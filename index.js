@@ -512,17 +512,18 @@ function pointToPoint(point1, point2) {
   return (point1[0] - point2[0]) * (point1[0] - point2[0]) + (point1[1] - point2[1]) * (point1[1] - point2[1])
 }
 
-//碰撞检测   不好用  有bug
+//碰撞检测
 function isHit(element1, element2) {
+  // AABB（未旋转矩形）的碰撞检测
   if (element1.hitType === 'AABB' && element2.hitType === 'AABB') {
     let minX = Math.max(element1.pointO[0], element2.pointO[0])
     let minY = Math.max(element1.pointO[1], element2.pointO[1])
-    let maxX = Math.min(element1.pointO[0] + element1.width, element1.pointO[1] + element2.width)
-    let maxY = Math.min(element2.pointO[0] + element1.height, element2.pointO[1] + element2.height)
-
+    let maxX = Math.min(element1.pointX[0], element1.pointX[0])
+    let maxY = Math.min(element1.pointY[1], element2.pointY[1])
     if (minX < maxX && minY < maxY) {
       return true
     }
     return false
   }
+  //
 }
