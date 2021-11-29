@@ -33,13 +33,17 @@
     rect2.zIndex = 0
     eCanvas.toBind(rect)
     eCanvas.toBind(rect2)
-    // rect.rotate(Math.PI / 4, 'middle')
+    // rect.rotate(Math.PI / 4, 'leftTop')
 
-    rect.moveByKey(1)
+    rect.moveByKey(5)
 
     setInterval(function () {
-      console.log(isHit(rect, rect2));
-    }, 1000)
+      if (isHit(rect, rect2)) {
+        rect2.color = 'red'
+      } else {
+        rect2.color = 'green'
+      }
+    }, 100)
 
     eCanvas.drow();
   </script>
