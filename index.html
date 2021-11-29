@@ -28,20 +28,26 @@
     let eCanvas = new ECanvas(canvas)
 
     let rect = new ERect(100, 100, 100, 100, 'fill', 'red')
-    let rect2 = new ERect(300, 300, 100, 100, 'fill', 'green')
-    rect.zIndex = 1
-    rect2.zIndex = 0
-    eCanvas.toBind(rect)
-    eCanvas.toBind(rect2)
-    // rect.rotate(Math.PI / 4, 'leftTop')
+    let rect3 = new ERect(500, 300, 100, 100, 'fill', 'green')
+    let arc = new EArc(400, 350, 50, 0, 2 * Math.PI, false, 'fill', 'blue')
 
-    rect.moveByKey(5)
+    arc.moveByKey(2)
+
+    rect.zIndex = 1
+    eCanvas.toBind(arc)
+    eCanvas.toBind(rect)
+    eCanvas.toBind(rect3)
+
+    rect.rotate(Math.PI / 4, 'leftTop')
+    // rect.moveByKey(5)
 
     setInterval(function () {
-      if (isHit(rect, rect2)) {
-        rect2.color = 'red'
+
+      if (isHit(arc, rect)) {
+
+        rect.color = arc.color
       } else {
-        rect2.color = 'green'
+        rect.color = 'red'
       }
     }, 100)
 

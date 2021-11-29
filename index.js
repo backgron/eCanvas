@@ -462,19 +462,37 @@ class ERect extends MoveShape {
  * 
  */
 class EArc extends MoveShape {
-  constructor(x, y, radius, startAngle, endAngle, direction, shape = 'fill', color = '#000') {
+  constructor(x, y, radius, startAngle, endAngle, anticlockwise, style = 'fill', color = '#000') {
+    super()
+    //基本信息
     this.x = x
     this.y = y
     this.radius = radius
     this.startAngle = startAngle
     this.endAngle = endAngle
-    this.direction = direction
-    this.shape = shape
+    this.anticlockwise = anticlockwise
+    this.style = style
     this.color = color
+    this.ctx = null
+    //碰撞信息
+    this.hitType = 'Arc'
   }
+
+  drow() {
+    // console.log('drow');
+    this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise)
+    if (this.style === 'fill') {
+      this.ctx.fillStyle = this.color
+      this.ctx.fill()
+    } else if (this.style === 'stroke') {
+      this.ctx.strokeStyle = this.color
+      this.ctx.stroke()
+    }
+
+  }
+
+
 }
-
-
 
 //公用方法
 //获取向量
@@ -489,7 +507,6 @@ function dot(vector1, vector2) {
 function cross(vector1, vector2) {
   return vector1[0] * vector2[1] - vector1[1] * vector2[0]
 }
-
 
 //图形判断位置的方法
 //点到点距离的平方
@@ -508,9 +525,7 @@ function pointToLine(point, linePoint1, linePoint2) {
   } else if (m >= n) {
     return pointToPoint(linePoint2, point)
   } else {
-    console.log(pointToPoint(linePoint1, point), m);
-    return (pointToPoint(linePoint1, point) - m * m)
-
+    return (pointToPoint(linePoint1, point) - m * m / pointToPoint(linePoint2, linePoint1))
   }
 }
 //点是否在图形内
@@ -547,14 +562,12 @@ function pointInShape(point, shape) {
 function isHit(element1, element2) {
   // AABB元素的碰撞检测
   if (element1.hitType === 'AABB' && element2.hitType === 'AABB') {
-    console.log("AABB");
     // AABB（未旋转矩形）的碰撞检测
     let minX = Math.max(element1.pointO[0], element2.pointO[0])
     let minY = Math.max(element1.pointO[1], element2.pointO[1])
     let maxX = Math.min(element1.pointX[0], element2.pointX[0])
     let maxY = Math.min(element1.pointY[1], element2.pointY[1])
     if (minX < maxX && minY < maxY) {
-      console.log(minX, minY, maxX, maxY);
       return true
     }
     return false
@@ -574,7 +587,6 @@ function isHit(element1, element2) {
 
   //圆形和矩形
   if (((element1.hitType === 'AABB' || element1.hitType === 'Rect') && element2.hitType === 'Arc') || ((element2.hitType === 'AABB' || element2.hitType === 'Rect') && element1.hitType === 'Arc')) {
-    console.log("圆形和矩形");
     let arc
     let rect
     if (element1.hitType === 'Arc') {
@@ -595,7 +607,8 @@ function isHit(element1, element2) {
       let xy = rect.pointXY
       let y = rect.pointY
       let r = arc.radius * arc.radius
-      if (pointToLine(p, o, x) <= r && pointToLine(p, x, xy) <= r && pointToLine(p, xy, y) <= r && pointToLine(p, y, o) <= r) {
+
+      if (pointToLine(p, o, x) <= r || pointToLine(p, x, xy) <= r || pointToLine(p, xy, y) <= r || pointToLine(p, y, o) <= r) {
         return true
       } else {
         return false
@@ -611,8 +624,6 @@ function isHit(element1, element2) {
   if ((element1.hitType === 'Rect' || element2.hitType === 'Rect') && element1.hitType !== 'Arc' && element2.hitType !== 'Arc') {
     let rect = element1
     let shape = element2
-    // console.log(rect);
-    // console.log('矩形和矩形');
     for (let i = 0; i < 2; i++) {
       let o = rect.pointO
       let x = rect.pointX
