@@ -23,6 +23,9 @@ class ECanvas {
     ]
     this.timeId = []
     this.rafId = []
+    this.event = {
+      click: [],
+    }
 
     this.init()
   }
@@ -55,15 +58,36 @@ class ECanvas {
       console.error('您的浏览器不支持 "<canvas>" 标签')
     }
 
+    this.doEvent()
+
   }
 
   //向画布中挂载对象
   toBind(ele) {
     if (ele && !ele.bind) {
       ele.ctx = this.ctx
-      ele.bind = true
+      ele.bind = this
       this.elements[ele.zIndex].push(ele)
     }
+
+  }
+
+  //添加事件元素
+  bindEvent(ele) {
+    for (let event in ele.eventType) {
+      switch (event) {
+        case 'click':
+          if (this.event.click.indexOf(ele) === -1) {
+            this.event.click.push(ele)
+          }
+          break
+      }
+    }
+  }
+
+  //移出事件绑定
+  removeEvent() {
+
   }
 
   //解除挂载
@@ -76,6 +100,30 @@ class ECanvas {
       console.warn(ele + '对象不存在');
     }
   }
+
+  //执行点击事件代理
+  doEvent() {
+    this.canvas.addEventListener('click', (e) => {
+      for (let i = 0; i < this.event.click.length; i++) {
+        let shape = this.event.click[i]
+        let event = {
+          x: e.clientX - this.canvas.getBoundingClientRect().left,
+          y: e.clientY - this.canvas.getBoundingClientRect().top,
+          shape: shape
+        }
+        if (pointInShape([event.x, event.y], this.event.click[i])) {
+          for (let fn in shape.eventType.click) {
+            if (shape.eventType.click[fn]) {
+              shape.eventType.click[fn](event)
+            }
+
+
+          }
+        }
+      }
+    })
+  }
+
 
   // 页面渲染入口
   drow() {
@@ -128,8 +176,10 @@ class MoveShape {
 
     //层级信息
     this.zIndex = 1
-  }
 
+    //事件信息
+    this.eventType = {}
+  }
 
   //初始化运动属性
   initMove(config) {
@@ -167,7 +217,6 @@ class MoveShape {
         }
       }
     }, 1))
-
   }
 
   //停止运动
@@ -230,6 +279,26 @@ class MoveShape {
     })
     this.move()
   }
+
+  //添加事件
+  addEventListener(type, name, callback) {
+    if (this.bind === false) {
+      console.warn('请在添加事件前先将元素绑定到eCanvas对象上')
+    } else {
+      if (this.eventType[type] === undefined) {
+        this.eventType[type] = {}
+        this.eventType[type][name] = callback
+      } else {
+        this.eventType[type][name] = callback
+      }
+      this.bind.bindEvent(this)
+    }
+  }
+
+  //移出事件帮i的那个
+  removeEventListener(type, name) {
+    this.eventType[type][name] = undefined
+  }
 }
 
 /**可控矩形ERect
@@ -267,6 +336,8 @@ class ERect extends MoveShape {
 
 
 
+
+
     this.init()
 
   }
@@ -274,7 +345,6 @@ class ERect extends MoveShape {
   init() {
     this.pointM = 'leftTop'
     this.setPoints()
-    console.log(this);
 
     Object.defineProperty(this, 'hitType', {
       get: function () {
@@ -577,7 +647,6 @@ function isHit(element1, element2) {
 
   //圆形和圆形
   if (element1.hitType === 'Arc' && element2.hitType === 'Arc') {
-    console.log("圆形和圆形");
     let d = pointToPoint([element1.x, element1.y], [element2.x, element2.y])
     let r = element1.radius * element1.radius + element2.radius * element2.radius
     if (d > r) {
@@ -709,5 +778,14 @@ function isEdge(ele, width, height, pattern) {
 }
 
 //注册事件
+// 1  鼠标按下事件
+// 2  鼠标抬起事件
+// 3  鼠标移动事件
+// 4  鼠标点击事件  √
 
-//图片嵌入s
+// 5  键盘按下事件
+// 6  键盘抬起事件
+
+
+
+//图片嵌入

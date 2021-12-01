@@ -14,12 +14,13 @@
 
     canvas {
       background-color: pink;
+      margin-left: 100px;
     }
   </style>
 </head>
 
 <body>
-  <canvas id='canvas' width="1500" height="1500"></canvas>
+  <canvas id='canvas' width="500" height="500"></canvas>
 
   <script src='index.js'></script>
   <script>
@@ -27,67 +28,17 @@
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
-    let rect = new ERect(10, 100, 100, 100)
-
+    let rect = new ERect(100, 100, 100, 100)
     eCanvas.toBind(rect)
 
-    rect.moveByKey(5)
+    rect.addEventListener('click', 'click', function (event) {
+      console.log(event);
+    })
+    rect.addEventListener('click', 'click2', function (event) {
+      console.log(event);
+    })
 
-
-    let arcs = []
-
-
-
-    setInterval(() => {
-      let arc = new EArc(rect.x + rect.width, rect.y + rect.height / 2, 10, 0, 2 * Math.PI, false, 'fill', 'red')
-      // let arc = new ERect(e.clientX, e.clientY, 50, 50)
-      arc.initMove({
-        Vx: Math.random() * 10 + 5,
-        Vy: Math.random() * 5 - Math.random() * 5
-      })
-      arc.move()
-      eCanvas.toBind(arc)
-      arcs.push(arc)
-    }, 10)
-
-    let ems = []
-    setInterval(() => {
-      let em = new ERect(1600, Math.random() * 1400, 100, 100, 'fill', '#000')
-      em.initMove({
-        Vx: -5
-      })
-      em.move()
-      eCanvas.toBind(em)
-      ems.push(em)
-    }, 500)
-
-
-
-    setInterval(() => {
-      for (let i = 0; i < ems.length; i++) {
-        for (let j = 0; j < arcs.length; j++) {
-          if (arcs[j].x > 1300) {
-            eCanvas.removeBind(arcs[j])
-            arcs.splice(j, 1)
-          }
-          if (isHit(arcs[j], ems[i])) {
-            eCanvas.removeBind(arcs[j])
-            arcs.splice(j, 1)
-            eCanvas.removeBind(ems[i])
-            ems.splice(i, 1)
-          }
-        }
-        if (ems[i].x < 0) {
-          eCanvas.removeBind(ems[i])
-          ems.splice(i, 1)
-        }
-      }
-
-    }, 10)
-
-
-
-
+    rect.removeEventListener('click', 'click2')
 
     eCanvas.drow();
   </script>
