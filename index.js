@@ -456,7 +456,6 @@ class ERect extends MoveShape {
       this.ctx.strokeStyle = this.color
       this.ctx.stroke()
     }
-    //增加画笔结束！！！！！！！！！！
   }
 }
 
