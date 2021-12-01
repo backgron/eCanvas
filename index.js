@@ -25,6 +25,11 @@ class ECanvas {
     this.rafId = []
     this.event = {
       click: [],
+      keydown: [],
+      keyup: [],
+      mousedown: [],
+      mouseup: [],
+      mouseover: []
     }
 
     this.init()
@@ -59,7 +64,6 @@ class ECanvas {
     }
 
     this.doEvent()
-
   }
 
   //向画布中挂载对象
@@ -75,12 +79,8 @@ class ECanvas {
   //添加事件元素
   bindEvent(ele) {
     for (let event in ele.eventType) {
-      switch (event) {
-        case 'click':
-          if (this.event.click.indexOf(ele) === -1) {
-            this.event.click.push(ele)
-          }
-          break
+      if (this.event[event].indexOf(ele) === -1) {
+        this.event[event].push(ele)
       }
     }
   }
@@ -101,26 +101,33 @@ class ECanvas {
     }
   }
 
-  //执行点击事件代理
+  //执行点击事件代理 
   doEvent() {
     this.canvas.addEventListener('click', (e) => {
       for (let i = 0; i < this.event.click.length; i++) {
         let shape = this.event.click[i]
+        //创建点击事件的事件对象
         let event = {
-          x: e.clientX - this.canvas.getBoundingClientRect().left,
-          y: e.clientY - this.canvas.getBoundingClientRect().top,
-          shape: shape
+          canvasX: e.clientX - this.canvas.getBoundingClientRect().left,
+          canvasY: e.clientY - this.canvas.getBoundingClientRect().top,
+          eventType: 'click',
+          eventName: '',
+          shape: shape,
+          domEvent: e
         }
-        if (pointInShape([event.x, event.y], this.event.click[i])) {
+        if (pointInShape([event.canvasX, event.canvasY], this.event.click[i])) {
           for (let fn in shape.eventType.click) {
             if (shape.eventType.click[fn]) {
+              event.eventName = fn
               shape.eventType.click[fn](event)
             }
-
-
           }
         }
       }
+    })
+
+    this.canvas.addEventListener('keydown', (e) => {
+
     })
   }
 
