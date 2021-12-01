@@ -68,6 +68,7 @@ class ECanvas {
 
   //解除挂载
   removeBind(ele) {
+    ele.stop()
     if (ele) {
       ele.ctx = null
       ele.bind = false
@@ -78,6 +79,7 @@ class ECanvas {
 
   // 页面渲染入口
   drow() {
+    let rafId
     let animate = () => {
       this.ctx.clearRect(0, 0, this.w, this.h)
       for (let i = 0; i < this.elements.length; i++) {
@@ -89,7 +91,7 @@ class ECanvas {
           this.elements[i][j].drow()
         }
       }
-      this.rafId.push(window.requestAnimationFrame(animate))
+      window.requestAnimationFrame(animate)
     }
     animate()
   }
@@ -454,6 +456,7 @@ class ERect extends MoveShape {
       this.ctx.strokeStyle = this.color
       this.ctx.stroke()
     }
+    //增加画笔结束！！！！！！！！！！
   }
 }
 
@@ -479,7 +482,7 @@ class EArc extends MoveShape {
   }
 
   drow() {
-    // console.log('drow');
+    this.ctx.beginPath()
     this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise)
     if (this.style === 'fill') {
       this.ctx.fillStyle = this.color
@@ -639,9 +642,8 @@ function isHit(element1, element2) {
     return false
   }
 
-
   //封印 BUG 的盒子！！！！！！！！！！
-  let box = () => {
+  let bugBox = () => {
     //基于分离轴原理的碰撞检测   不对，有bug
     // 获取矩形的分离轴
     let getRectAxis = (element) => {
@@ -701,3 +703,12 @@ function isHit(element1, element2) {
   }
 
 }
+
+//边界检测
+function isEdge(ele, width, height, pattern) {
+
+}
+
+//注册事件
+
+//图片嵌入s

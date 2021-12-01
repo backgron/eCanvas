@@ -27,29 +27,67 @@
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
-    let rect = new ERect(100, 100, 100, 100, 'fill', 'red')
-    let rect3 = new ERect(500, 300, 100, 100, 'fill', 'green')
-    let arc = new EArc(400, 350, 50, 0, 2 * Math.PI, false, 'fill', 'blue')
+    let rect = new ERect(10, 100, 100, 100)
 
-    arc.moveByKey(2)
-
-    rect.zIndex = 1
-    eCanvas.toBind(arc)
     eCanvas.toBind(rect)
-    eCanvas.toBind(rect3)
 
-    rect.rotate(Math.PI / 4, 'leftTop')
-    // rect.moveByKey(5)
+    rect.moveByKey(5)
 
-    setInterval(function () {
 
-      if (isHit(arc, rect)) {
+    let arcs = []
 
-        rect.color = arc.color
-      } else {
-        rect.color = 'red'
+
+
+    setInterval(() => {
+      let arc = new EArc(rect.x + rect.width, rect.y + rect.height / 2, 10, 0, 2 * Math.PI, false, 'fill', 'red')
+      // let arc = new ERect(e.clientX, e.clientY, 50, 50)
+      arc.initMove({
+        Vx: Math.random() * 10 + 5,
+        Vy: Math.random() * 5 - Math.random() * 5
+      })
+      arc.move()
+      eCanvas.toBind(arc)
+      arcs.push(arc)
+    }, 10)
+
+    let ems = []
+    setInterval(() => {
+      let em = new ERect(1600, Math.random() * 1400, 100, 100, 'fill', '#000')
+      em.initMove({
+        Vx: -5
+      })
+      em.move()
+      eCanvas.toBind(em)
+      ems.push(em)
+    }, 500)
+
+
+
+    setInterval(() => {
+      for (let i = 0; i < ems.length; i++) {
+        for (let j = 0; j < arcs.length; j++) {
+          if (arcs[j].x > 1300) {
+            eCanvas.removeBind(arcs[j])
+            arcs.splice(j, 1)
+          }
+          if (isHit(arcs[j], ems[i])) {
+            eCanvas.removeBind(arcs[j])
+            arcs.splice(j, 1)
+            eCanvas.removeBind(ems[i])
+            ems.splice(i, 1)
+          }
+        }
+        if (ems[i].x < 0) {
+          eCanvas.removeBind(ems[i])
+          ems.splice(i, 1)
+        }
       }
-    }, 100)
+
+    }, 10)
+
+
+
+
 
     eCanvas.drow();
   </script>
