@@ -126,7 +126,7 @@ class ECanvas {
           for (let fn in event.shape.eventType[type]) {
             if (event.shape.eventType[type][fn]) {
               event.eventName = fn
-              event.shape.eventType[type][fn](event)
+              event.shape.eventType[type][fn].call(event.shape, event)
             }
           }
         }
@@ -172,7 +172,7 @@ class ECanvas {
         for (let fn in event.shape.eventType[type]) {
           if (event.shape.eventType[type][fn]) {
             event.eventName = fn
-            event.shape.eventType[type][fn](event)
+            event.shape.eventType[type][fn].call(event.shape, event)
           }
         }
       }
@@ -843,3 +843,5 @@ function isEdge(ele, width, height, pattern) {
 
 
 //图片嵌入
+
+//条件删除

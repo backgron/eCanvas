@@ -13,22 +13,27 @@
     }
 
     canvas {
-      background-color: pink;
-      margin-left: 100px;
+      background-color: rgb(15, 14, 15);
+
     }
   </style>
 </head>
 
 <body>
-  <canvas id='canvas' width="500" height="500"></canvas>
+  <canvas id='canvas' width="1500" height="1500"></canvas>
 
   <script src='index.js'></script>
   <script>
     //创建eCanvas对象
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
-    let rect = new ERect(Math.random() * 400, Math.random() * 400, 100, 100)
+
+    let rect = new ERect(100, 100, 100, 100)
     eCanvas.toBind(rect)
+    rect.addEventListener('keydown', 'keydown1', function (event) {})
+
+
+
 
 
 
