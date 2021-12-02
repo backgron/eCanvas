@@ -28,8 +28,8 @@ class ECanvas {
       keydown: [],
       keyup: [],
       mousedown: [],
+      mousemove: [],
       mouseup: [],
-      mouseover: []
     }
 
     this.init()
@@ -86,9 +86,7 @@ class ECanvas {
   }
 
   //移出事件绑定
-  removeEvent() {
-
-  }
+  removeEvent() {}
 
   //解除挂载
   removeBind(ele) {
@@ -101,33 +99,92 @@ class ECanvas {
     }
   }
 
-  //执行点击事件代理 
+  //执行事件代理 
   doEvent() {
-    this.canvas.addEventListener('click', (e) => {
-      for (let i = 0; i < this.event.click.length; i++) {
-        let shape = this.event.click[i]
+
+    /**
+     * 鼠标相关的事件对象类
+     */
+    class MouseEvent {
+      constructor(type, e, that, i) {
+        this.canvasX = e.clientX - that.canvas.getBoundingClientRect().left
+        this.canvasY = e.clientY - that.canvas.getBoundingClientRect().top
+        this.eventType = type
+        this.eventName = ''
+        this.shape = that.event[type][i]
+        this.shapeName = that.event[type][i].name
+        this.domEvent = e
+      }
+    }
+    //创建鼠标事件的方法
+    let createMouseEvent = (type, e) => {
+      for (let i = 0; i < this.event[type].length; i++) {
         //创建点击事件的事件对象
-        let event = {
-          canvasX: e.clientX - this.canvas.getBoundingClientRect().left,
-          canvasY: e.clientY - this.canvas.getBoundingClientRect().top,
-          eventType: 'click',
-          eventName: '',
-          shape: shape,
-          domEvent: e
-        }
-        if (pointInShape([event.canvasX, event.canvasY], this.event.click[i])) {
-          for (let fn in shape.eventType.click) {
-            if (shape.eventType.click[fn]) {
+        let event = new MouseEvent(type, e, this, i);
+        //判断是否触发事件
+        if (pointInShape([event.canvasX, event.canvasY], this.event[type][i])) {
+          for (let fn in event.shape.eventType[type]) {
+            if (event.shape.eventType[type][fn]) {
               event.eventName = fn
-              shape.eventType.click[fn](event)
+              event.shape.eventType[type][fn](event)
             }
           }
         }
       }
+    }
+    //注册鼠标相关事件
+    //鼠标点击事件
+    this.canvas.addEventListener('click', (e) => {
+      createMouseEvent('click', e)
+    })
+    //鼠标按下事件
+    this.canvas.addEventListener('mousedown', (e) => {
+      createMouseEvent('mousedown', e)
+    })
+    //鼠标抬起事件
+    this.canvas.addEventListener('mouseup', (e) => {
+      createMouseEvent('mouseup', e)
+    })
+    //鼠标移动事件
+    this.canvas.addEventListener('mousemove', (e) => {
+      createMouseEvent('mousemove', e)
     })
 
-    this.canvas.addEventListener('keydown', (e) => {
-
+    /**
+     * 键盘相关事件对象
+     */
+    class KeyEvent {
+      constructor(type, e, that, i) {
+        this.key = e.key,
+          this.code = e.code,
+          this.keyCode = e.keyCode,
+          this.eventType = type,
+          this.eventName = '',
+          this.shapeName = that.event[type][i].name,
+          this.shape = that.event[type][i],
+          this.domEvent = e
+      }
+    }
+    //创建键盘相关事件的方法
+    let createKeyEvent = (type, e) => {
+      for (let i = 0; i < this.event[type].length; i++) {
+        let event = new KeyEvent(type, e, this, i)
+        for (let fn in event.shape.eventType[type]) {
+          if (event.shape.eventType[type][fn]) {
+            event.eventName = fn
+            event.shape.eventType[type][fn](event)
+          }
+        }
+      }
+    }
+    //注册键盘相关事件
+    //键盘按下事件
+    window.addEventListener('keydown', (e) => {
+      createKeyEvent('keydown', e)
+    })
+    //键盘抬起事件
+    window.addEventListener('keyup', (e) => {
+      createKeyEvent('keyup', e)
     })
   }
 
@@ -186,6 +243,9 @@ class MoveShape {
 
     //事件信息
     this.eventType = {}
+
+    //特征名称信息
+    this.name = '未命名'
   }
 
   //初始化运动属性
@@ -340,9 +400,6 @@ class ERect extends MoveShape {
 
     //碰撞信息
     this.hitType = 'AABB'
-
-
-
 
 
     this.init()
@@ -586,7 +643,6 @@ function dot(vector1, vector2) {
 function cross(vector1, vector2) {
   return vector1[0] * vector2[1] - vector1[1] * vector2[0]
 }
-
 //图形判断位置的方法
 //点到点距离的平方
 function pointToPoint(point1, point2) {
@@ -783,15 +839,6 @@ function isHit(element1, element2) {
 function isEdge(ele, width, height, pattern) {
 
 }
-
-//注册事件
-// 1  鼠标按下事件
-// 2  鼠标抬起事件
-// 3  鼠标移动事件
-// 4  鼠标点击事件  √
-
-// 5  键盘按下事件
-// 6  键盘抬起事件
 
 
 

@@ -27,15 +27,8 @@
     //创建eCanvas对象
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
-
-
     let rect = new ERect(Math.random() * 400, Math.random() * 400, 100, 100)
     eCanvas.toBind(rect)
-    rect.addEventListener('click', 'click2', (event) => {
-      console.log(event);
-      eCanvas.removeBind(this)
-    })
-
 
 
 
