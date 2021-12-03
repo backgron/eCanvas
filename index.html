@@ -21,7 +21,6 @@
 </head>
 
 <body>
-  <input id='scoed'>
   <canvas id='canvas' width="500" height="500"></canvas>
 
   <script src='index.js'></script>
@@ -29,49 +28,37 @@
     //创建eCanvas对象
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
-    let scoed = {
-      value: 5
+
+    let arr = []
+    let createArc = (e) => {
+      let arc = new EArc(e.canvasX, e.canvasY, Math.random() * 20, 0, 2 * Math.PI)
+      arc.initMove({
+        Vx: Math.random() * 3 + 2,
+        Vy: Math.random() * 3 + 2
+      })
+      arc.move()
+      eCanvas.toBind(arc)
+      arr.push(arc)
+      console.log(1);
     }
-    let input = document.getElementById('scoed')
-    Object.defineProperty(scoed, 'value', {
-      get: function () {
-        return input.value
-      },
-      set: function (value) {
-        input.value = value
-      }
+    let createId
+    eCanvas.addEventListener('mousedown', 'createArc', function (e) {
+      eCanvas.addEventListener('mousemove', 'createArc', function (e) {
+        createArc(e)
+        console.log('create');
+      })
     })
 
-    let arcxy = [50, 250, 450]
-    let arcs = []
-    let speed = 1000
+    let id = eCanvas.preRemoveBind(arr, function (item) {
+      console.log(item.x > eCanvas.w);
+      if (item.x > eCanvas.w) {
+        return true
+      }
+    }, true)
 
-    setInterval(function () {
-      let x = arcxy[Math.floor(Math.random() * 3)]
-      let y = arcxy[Math.floor(Math.random() * 3)]
-      let arc = new EArc(x, y, 50, 0, Math.PI * 2)
-      eCanvas.toBind(arc)
-      let id = setTimeout(function () {
-        scoed.value--
-        eCanvas.removeBind(arc)
-      }, speed)
-      arc.addEventListener('click', 'dispaer', function () {
-        clearTimeout(id)
-        arc.removeEventListener('click', 'dispaer')
-        this.color = 'red'
-        this.radius = 30
-        scoed.value++
-        setTimeout(() => {
-          eCanvas.removeBind(this)
-        }, 30)
-      })
-      arcs.push(arc)
-      speed -= 5
-    }, speed)
-
-
-
-
+    eCanvas.addEventListener('mouseup', 'RemoveArc', function (e) {
+      eCanvas.removeEventListener('mousemove', 'createArc')
+    })
 
     eCanvas.drow();
   </script>

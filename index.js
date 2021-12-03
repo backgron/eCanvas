@@ -32,6 +32,7 @@ class ECanvas {
       mouseup: [],
     }
     this.eventType = {}
+    this.bind = true
 
     this.name = 'ECanvas'
 
@@ -122,6 +123,11 @@ class ECanvas {
     //创建鼠标事件的方法
     let createMouseEvent = (type, e) => {
       for (let i = 0; i < this.event[type].length; i++) {
+        if (!this.event[type][i].bind) {
+          this.event[type].splice(i, 1)
+          i--
+          continue
+        }
         //创建点击事件的事件对象
         let event = new MouseEvent(type, e, this, i);
         //判断是否触发事件
@@ -205,6 +211,8 @@ class ECanvas {
         if (removeFun(arr[i])) {
           this.removeBind(arr[i])
           arr.splice(i, 1)
+          i--
+          continue
         }
         if (typeof clearFun === 'function') {
           if (clearFun()) {
@@ -243,6 +251,7 @@ class ECanvas {
         for (let j = 0; j < this.elements[i].length; j++) {
           if (!this.elements[i][j].bind) {
             this.elements[i].splice(j, 1)
+            j--
             continue
           }
           this.elements[i][j].drow()
