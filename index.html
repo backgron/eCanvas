@@ -13,7 +13,7 @@
     }
 
     canvas {
-      background-color: rgb(15, 14, 15);
+      background-color: rgb(240, 233, 240);
       margin: 0 auto;
       display: block;
     }
@@ -29,7 +29,25 @@
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
+    let arr = []
 
+    eCanvas.addEventListener('mousemove', 'createArc', function (e) {
+      let arc = new EArc(e.canvasX, e.canvasY, Math.random() * 20, 0, 2 * Math.PI)
+      arc.initMove({
+        Vx: Math.random() * 3 + 2,
+        Vy: Math.random() * 3 + 2
+      })
+      arc.move()
+      eCanvas.toBind(arc)
+      arr.push(arc)
+    })
+
+    let id = eCanvas.preRemoveBind(arr, function (item) {
+      console.log(item.x > eCanvas.w);
+      if (item.x > eCanvas.w) {
+        return true
+      }
+    }, true)
 
 
 

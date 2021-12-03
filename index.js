@@ -97,6 +97,7 @@ class ECanvas {
     if (ele) {
       ele.ctx = null
       ele.bind = false
+      console.log('remove')
     } else {
       console.warn(ele + '对象不存在');
     }
@@ -104,9 +105,6 @@ class ECanvas {
 
   //执行事件代理 
   doEvent() {
-
-
-
     /**
      * 鼠标相关的事件对象类
      */
@@ -200,6 +198,27 @@ class ECanvas {
     })
   }
 
+  //预删除
+  preRemoveBind(arr, removeFun, clearFun) {
+    let id = setInterval(() => {
+      for (let i = 0; i < arr.length; i++) {
+        if (removeFun(arr[i])) {
+          this.removeBind(arr[i])
+          arr.splice(i, 1)
+        }
+        if (typeof clearFun === 'function') {
+          if (clearFun()) {
+            clearInterval(id)
+          }
+        }
+      }
+    }, 10)
+    if (!clearFun) {
+      console.warn('不及时清理元素集预删除(preRemoveBind)时所产生的定时器，可能会造成资源浪费哦,建议通过定时器(clearInterval)id手动清理或者添加clearFun方法自动清理,添加true参数可以关闭提示')
+    }
+    return id
+  }
+
   //添加事件
   addEventListener(type, name, callback) {
     if (this.eventType[type] === undefined) {
@@ -211,7 +230,7 @@ class ECanvas {
     this.bindEvent(this)
   }
 
-  //移出事件帮i的那个
+  //移出事件
   removeEventListener(type, name) {
     this.eventType[type][name] = undefined
   }
@@ -605,7 +624,10 @@ class ERect extends MoveShape {
   }
 
   //绘画的方法
-  drow() {
+  drow(beforeDrow) {
+    if (typeof beforeDrow === 'function') {
+      beforeDrow()
+    }
     this.ctx.beginPath();
     this.ctx.moveTo(this.pointO[0], this.pointO[1])
     this.ctx.lineTo(this.pointX[0], this.pointX[1])
@@ -645,7 +667,10 @@ class EArc extends MoveShape {
     this.name = 'unnamed-EArc'
   }
 
-  drow() {
+  drow(beforeDrow) {
+    if (typeof beforeDrow === 'function') {
+      beforeDrow()
+    }
     this.ctx.beginPath()
     this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise)
     if (this.style === 'fill') {
