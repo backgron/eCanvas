@@ -214,7 +214,7 @@ class ECanvas {
       }
     }, 10)
     if (!clearFun) {
-      console.warn('不及时清理元素集预删除(preRemoveBind)时所产生的定时器，可能会造成资源浪费哦,建议通过定时器(clearInterval)id手动清理或者添加clearFun方法自动清理,添加true参数可以关闭提示')
+      console.warn('不及时清理元素集预删除(preRemoveBind)时所产生的定时器，可能会造成资源浪费哦,建议添加clearFun方法自动清理(推荐)或者通过定时器(clearInterval)id手动清理,添加true参数可以关闭提示')
     }
     return id
   }
@@ -680,10 +680,7 @@ class EArc extends MoveShape {
       this.ctx.strokeStyle = this.color
       this.ctx.stroke()
     }
-
   }
-
-
 }
 
 //公用方法
@@ -900,4 +897,4 @@ function isEdge(ele, width, height, pattern) {
 
 //图片嵌入
 
-//条件删除
+//帧同步
