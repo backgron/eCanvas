@@ -31,6 +31,9 @@ class ECanvas {
       mousemove: [],
       mouseup: [],
     }
+    this.eventType = {}
+
+    this.name = 'ECanvas'
 
     this.init()
   }
@@ -102,6 +105,8 @@ class ECanvas {
   //执行事件代理 
   doEvent() {
 
+
+
     /**
      * 鼠标相关的事件对象类
      */
@@ -122,7 +127,14 @@ class ECanvas {
         //创建点击事件的事件对象
         let event = new MouseEvent(type, e, this, i);
         //判断是否触发事件
-        if (pointInShape([event.canvasX, event.canvasY], this.event[type][i])) {
+        if (this.event[type][i] instanceof ECanvas) {
+          for (let fn in this.eventType[type]) {
+            if (this.eventType[type][fn]) {
+              event.eventName = fn
+              this.eventType[type][fn].call(this, event)
+            }
+          }
+        } else if (pointInShape([event.canvasX, event.canvasY], this.event[type][i])) {
           for (let fn in event.shape.eventType[type]) {
             if (event.shape.eventType[type][fn]) {
               event.eventName = fn
@@ -188,7 +200,21 @@ class ECanvas {
     })
   }
 
+  //添加事件
+  addEventListener(type, name, callback) {
+    if (this.eventType[type] === undefined) {
+      this.eventType[type] = {}
+      this.eventType[type][name] = callback
+    } else {
+      this.eventType[type][name] = callback
+    }
+    this.bindEvent(this)
+  }
 
+  //移出事件帮i的那个
+  removeEventListener(type, name) {
+    this.eventType[type][name] = undefined
+  }
   // 页面渲染入口
   drow() {
     let rafId
@@ -245,7 +271,7 @@ class MoveShape {
     this.eventType = {}
 
     //特征名称信息
-    this.name = '未命名'
+    this.name = 'unnamed-MoveShape'
   }
 
   //初始化运动属性
@@ -400,6 +426,9 @@ class ERect extends MoveShape {
 
     //碰撞信息
     this.hitType = 'AABB'
+
+    //命名
+    this.name = 'unnamed-ERect'
 
 
     this.init()
@@ -612,6 +641,8 @@ class EArc extends MoveShape {
     this.ctx = null
     //碰撞信息
     this.hitType = 'Arc'
+    //名称
+    this.name = 'unnamed-EArc'
   }
 
   drow() {

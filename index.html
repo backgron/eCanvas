@@ -14,13 +14,14 @@
 
     canvas {
       background-color: rgb(15, 14, 15);
-
+      margin: 0 auto;
+      display: block;
     }
   </style>
 </head>
 
 <body>
-  <canvas id='canvas' width="1500" height="1500"></canvas>
+  <canvas id='canvas' width="500" height="500"></canvas>
 
   <script src='index.js'></script>
   <script>
@@ -28,9 +29,7 @@
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
-    let rect = new ERect(100, 100, 100, 100)
-    eCanvas.toBind(rect)
-    rect.addEventListener('keydown', 'keydown1', function (event) {})
+
 
 
 
