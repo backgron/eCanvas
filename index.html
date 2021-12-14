@@ -12,55 +12,55 @@
       /* background-color: pink; */
     }
 
-    canvas {
-      background-color: rgb(240, 233, 240);
-      margin: 0 auto;
-      display: block;
+    #canvas {
+      background-color: pink;
+    }
+
+    #img_canvas {
+      background-color: skyblue;
     }
   </style>
 </head>
 
 <body>
   <canvas id='canvas' width="500" height="500"></canvas>
+  <canvas id='img_canvas' width="102" height="126"></canvas>
 
   <script src='index.js'></script>
   <script>
+    let pi = Math.PI / 5
+    // setInterval(function () {
+    //   pi += Math.PI / 360
+    // })
+
     //创建eCanvas对象
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
-    let arr = []
-    let createArc = (e) => {
-      let arc = new EArc(e.canvasX, e.canvasY, Math.random() * 20, 0, 2 * Math.PI)
-      arc.initMove({
-        Vx: Math.random() * 3 + 2,
-        Vy: Math.random() * 3 + 2
-      })
-      arc.move()
-      eCanvas.toBind(arc)
-      arr.push(arc)
-      console.log(1);
-    }
-    let createId
-    eCanvas.addEventListener('mousedown', 'createArc', function (e) {
-      eCanvas.addEventListener('mousemove', 'createArc', function (e) {
-        createArc(e)
-        console.log('create');
-      })
-    })
 
-    let id = eCanvas.preRemoveBind(arr, function (item) {
-      console.log(item.x > eCanvas.w);
-      if (item.x > eCanvas.w) {
-        return true
+
+    let rect = new ERect(200, 200, 102, 126, 'stroke', 'red')
+    eCanvas.toBind(rect)
+    rect.rotate(pi, 'middle')
+
+    rect.initImage(['me2.png', 'me1.png'])
+
+    let i = 0
+    setInterval(function () {
+      if (i === 0) {
+        rect.Image.src = rect.imgs[0]
+        i = 1
+      } else {
+        rect.Image.src = rect.imgs[1]
+        i = 0
       }
-    }, true)
+    }, 50)
 
-    eCanvas.addEventListener('mouseup', 'RemoveArc', function (e) {
-      eCanvas.removeEventListener('mousemove', 'createArc')
-    })
+    rect.moveByKey(3)
 
-    eCanvas.drow();
+
+
+    eCanvas.draw();
   </script>
 </body>
 

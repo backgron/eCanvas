@@ -222,7 +222,7 @@ class ECanvas {
       }
     }, 10)
     if (!clearFun) {
-      console.warn('不及时清理元素集预删除(preRemoveBind)时所产生的定时器，可能会造成资源浪费哦,建议添加clearFun方法自动清理(推荐)或者通过定时器(clearInterval)id手动清理,添加true参数可以关闭提示')
+      console.warn('如果不及时清理元素集预删除(preRemoveBind)时所产生的定时器，可能会造成资源浪费哦,建议添加clearFun方法自动清理(推荐)或者通过定时器(clearInterval)id手动清理,添加true参数可以关闭提示')
     }
     return id
   }
@@ -243,7 +243,7 @@ class ECanvas {
     this.eventType[type][name] = undefined
   }
   // 页面渲染入口
-  drow() {
+  draw(callback) {
     let rafId
     let animate = () => {
       this.ctx.clearRect(0, 0, this.w, this.h)
@@ -254,7 +254,7 @@ class ECanvas {
             j--
             continue
           }
-          this.elements[i][j].drow()
+          this.elements[i][j].draw()
         }
       }
       window.requestAnimationFrame(animate)
@@ -300,6 +300,9 @@ class MoveShape {
 
     //特征名称信息
     this.name = 'unnamed-MoveShape'
+
+    //绘画的回调函数
+    this.beforeDrow
   }
 
   //初始化运动属性
@@ -360,7 +363,7 @@ class MoveShape {
   }
 
   //通过键盘上下左右运动
-  moveByKey(v, key = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'], callback) {
+  moveByKey(v = 3, key = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'], callback) {
     if (callback) {
       callback()
     }
@@ -458,6 +461,11 @@ class ERect extends MoveShape {
     //命名
     this.name = 'unnamed-ERect'
 
+    //图片信息
+    this.Image = new Image()
+    this.imgIsLoad = false
+    this.img
+    this.imgs = []
 
     this.init()
 
@@ -626,17 +634,52 @@ class ERect extends MoveShape {
     })
   }
 
-  //控制旋转的方法
+  //控制旋转的方法 
   rotate(direction, pointM = 'middle') {
     this.direction = direction
     this.pointM = pointM
   }
 
+  //设置图片的方法 
+  initImage(imgs) {
+    this.imgs = imgs
+    let loadComplete = async (src) => {
+      return new Promise((resolve) => {
+        this.Image.src = src
+        this.Image.onload = () => {
+          console.log(1)
+          console.log('img load completed!' + src)
+          resolve('sucess')
+        }
+      })
+    }
+    let init = async () => {
+      console.log(this)
+      let res = await Promise.all(this.imgs.map(src => {
+        loadComplete(src)
+      }))
+      console.log(true)
+      this.imgIsLoad = true
+      this.img = this.imgs[0]
+    }
+    init()
+  }
+
+
+
   //绘画的方法
-  drow(beforeDrow) {
+  draw(beforeDrow) {
     if (typeof beforeDrow === 'function') {
       beforeDrow()
     }
+    if (this.imgIsLoad) {
+      this.ctx.translate(this.pointO[0], this.pointO[1])
+      this.ctx.rotate(this.direction)
+      this.ctx.drawImage(this.Image, 0, 0)
+      this.ctx.rotate(-this.direction)
+      this.ctx.translate(-this.pointO[0], -this.pointO[1])
+    }
+
     this.ctx.beginPath();
     this.ctx.moveTo(this.pointO[0], this.pointO[1])
     this.ctx.lineTo(this.pointX[0], this.pointX[1])
@@ -676,7 +719,7 @@ class EArc extends MoveShape {
     this.name = 'unnamed-EArc'
   }
 
-  drow(beforeDrow) {
+  draw(beforeDrow) {
     if (typeof beforeDrow === 'function') {
       beforeDrow()
     }
@@ -810,10 +853,6 @@ function isHit(element1, element2) {
         return false
       }
     }
-
-
-
-
   }
 
   //矩形和矩形
@@ -901,9 +940,5 @@ function isHit(element1, element2) {
 function isEdge(ele, width, height, pattern) {
 
 }
-
-
-
-//图片嵌入
 
 //帧同步
