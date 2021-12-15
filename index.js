@@ -106,20 +106,6 @@ class ECanvas {
 
   //执行事件代理 
   doEvent() {
-    /**
-     * 鼠标相关的事件对象类
-     */
-    class MouseEvent {
-      constructor(type, e, that, i) {
-        this.canvasX = e.clientX - that.canvas.getBoundingClientRect().left
-        this.canvasY = e.clientY - that.canvas.getBoundingClientRect().top
-        this.eventType = type
-        this.eventName = ''
-        this.shape = that.event[type][i]
-        this.shapeName = that.event[type][i].name
-        this.domEvent = e
-      }
-    }
     //创建鼠标事件的方法
     let createMouseEvent = (type, e) => {
       for (let i = 0; i < this.event[type].length; i++) {
@@ -166,21 +152,6 @@ class ECanvas {
       createMouseEvent('mousemove', e)
     })
 
-    /**
-     * 键盘相关事件对象
-     */
-    class KeyEvent {
-      constructor(type, e, that, i) {
-        this.key = e.key,
-          this.code = e.code,
-          this.keyCode = e.keyCode,
-          this.eventType = type,
-          this.eventName = '',
-          this.shapeName = that.event[type][i].name,
-          this.shape = that.event[type][i],
-          this.domEvent = e
-      }
-    }
     //创建键盘相关事件的方法
     let createKeyEvent = (type, e) => {
       for (let i = 0; i < this.event[type].length; i++) {
@@ -303,6 +274,12 @@ class MoveShape {
 
     //绘画的回调函数
     this.beforeDrow
+
+    this.init()
+  }
+
+  init() {
+
   }
 
   //初始化运动属性
@@ -311,6 +288,17 @@ class MoveShape {
       for (let key in config) {
         this[key] = config[key]
       }
+    }
+  }
+
+  //设置层级
+  zIndexSet(num) {
+    if (this.bind) {
+      this.bind.removeBind(this)
+      this.zIndex = num
+      this.bind.toBind(this)
+    } else {
+      this.zIndex = num
     }
   }
 
@@ -647,18 +635,18 @@ class ERect extends MoveShape {
       return new Promise((resolve) => {
         this.Image.src = src
         this.Image.onload = () => {
-          console.log(1)
-          console.log('img load completed!' + src)
+          // console.log(1)
+          // console.log('img load completed!' + src)
           resolve('sucess')
         }
       })
     }
     let init = async () => {
-      console.log(this)
+      // console.log(this)
       let res = await Promise.all(this.imgs.map(src => {
         loadComplete(src)
       }))
-      console.log(true)
+      // console.log(true)
       this.imgIsLoad = true
       this.img = this.imgs[0]
     }
@@ -717,6 +705,9 @@ class EArc extends MoveShape {
     this.hitType = 'Arc'
     //名称
     this.name = 'unnamed-EArc'
+
+    //绘画
+    this.beforDrow
   }
 
   draw(beforeDrow) {
@@ -941,4 +932,38 @@ function isEdge(ele, width, height, pattern) {
 
 }
 
-//帧同步
+
+
+
+// 事件对象
+
+/**
+ * 鼠标相关的事件对象类
+ */
+class MouseEvent {
+  constructor(type, e, that, i) {
+    this.canvasX = e.clientX - that.canvas.getBoundingClientRect().left
+    this.canvasY = e.clientY - that.canvas.getBoundingClientRect().top
+    this.eventType = type
+    this.eventName = ''
+    this.shape = that.event[type][i]
+    this.shapeName = that.event[type][i].name
+    this.domEvent = e
+  }
+}
+
+/**
+ * 键盘相关事件对象
+ */
+class KeyEvent {
+  constructor(type, e, that, i) {
+    this.key = e.key,
+      this.code = e.code,
+      this.keyCode = e.keyCode,
+      this.eventType = type,
+      this.eventName = '',
+      this.shapeName = that.event[type][i].name,
+      this.shape = that.event[type][i],
+      this.domEvent = e
+  }
+}

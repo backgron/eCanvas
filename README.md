@@ -136,11 +136,14 @@ let rect = new ERect(10, 300, 10, 10, 'fill', 'red')
 
   
 
+  参考文献
   
-
-
-
-
+  1. bilibili  渔夫小朋友  [渔夫游戏开发教程-数学基础](https://space.bilibili.com/308864667/channel/detail?cid=89418)
+  2. bilibili  渔夫小朋友  [【免费且完整】【渔夫】游戏开发教程-碰撞检测(合集) ](https://www.bilibili.com/video/BV1wJ411u7YB?spm_id_from=333.999.0.0)
+  3. 稀土掘金   三只小羊  [canvas核心技术教学]([Canvas 核心技术 - 掘金 (juejin.cn)](https://juejin.cn/post/6844903636925939726))
+  4. MDN   [canvas基础教学]([Canvas - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API))
+  5. TypeScript
+  6. JavaScript
 
 
 

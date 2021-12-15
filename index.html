@@ -28,7 +28,7 @@
 
   <script src='index.js'></script>
   <script>
-    let pi = Math.PI / 5
+    let pi = 0
     // setInterval(function () {
     //   pi += Math.PI / 360
     // })
@@ -56,7 +56,10 @@
       }
     }, 50)
 
-    rect.moveByKey(3)
+    rect.moveByKey(5)
+    rect.addEventListener('click', 'click', function (e) {
+      console.log(e);
+    })
 
 
 
