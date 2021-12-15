@@ -275,10 +275,10 @@ class MoveShape {
     //绘画的回调函数
     this.beforeDrow
 
-    this.init()
+    this.MoveShapeInit()
   }
 
-  init() {
+  MoveShapeInit() {
 
   }
 
@@ -444,7 +444,7 @@ class ERect extends MoveShape {
     this.direction = 0
 
     //碰撞信息
-    this.hitType = 'AABB'
+    this.hitType
 
     //命名
     this.name = 'unnamed-ERect'

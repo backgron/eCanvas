@@ -7,63 +7,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    body {
-      overflow: hidden;
-      /* background-color: pink; */
-    }
-
-    #canvas {
+    canvas {
       background-color: pink;
-    }
-
-    #img_canvas {
-      background-color: skyblue;
     }
   </style>
 </head>
 
 <body>
-  <canvas id='canvas' width="500" height="500"></canvas>
-  <canvas id='img_canvas' width="102" height="126"></canvas>
-
+  <canvas id="canvas" width="500" height="500"></canvas>
   <script src='index.js'></script>
   <script>
-    let pi = 0
-    // setInterval(function () {
-    //   pi += Math.PI / 360
-    // })
-
-    //创建eCanvas对象
     let canvas = document.querySelector('#canvas')
     let eCanvas = new ECanvas(canvas)
 
-
-
-    let rect = new ERect(200, 200, 102, 126, 'stroke', 'red')
+    let rect = new ERect(100, 100, 100, 100)
     eCanvas.toBind(rect)
-    rect.rotate(pi, 'middle')
 
-    rect.initImage(['me2.png', 'me1.png'])
-
-    let i = 0
-    setInterval(function () {
-      if (i === 0) {
-        rect.Image.src = rect.imgs[0]
-        i = 1
-      } else {
-        rect.Image.src = rect.imgs[1]
-        i = 0
-      }
-    }, 50)
-
-    rect.moveByKey(5)
-    rect.addEventListener('click', 'click', function (e) {
-      console.log(e);
-    })
-
-
-
-    eCanvas.draw();
+    eCanvas.draw()
   </script>
 </body>
 
