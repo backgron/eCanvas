@@ -15,14 +15,18 @@
 
 <body>
   <canvas id="canvas" width="500" height="500"></canvas>
-  <script src='index.js'></script>
+  <script src='typeScript.js'></script>
   <script>
-    let canvas = document.querySelector('#canvas')
+    let canvas = document.querySelector(' #canvas')
     let eCanvas = new ECanvas(canvas)
-
     let rect = new ERect(100, 100, 100, 100)
     eCanvas.toBind(rect)
 
+    let rect2 = new ERect(100, 100, 100, 100, 'fill', 'red')
+    eCanvas.toBind(rect2)
+    rect2.rotate(Math.PI / 4, 'leftTop')
+
+    // rect.zIndexSet(2)
     eCanvas.draw()
   </script>
 </body>
