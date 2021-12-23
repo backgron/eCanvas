@@ -1,70 +1,19 @@
 {
-  "name": "webpack_code",
+  "name": "ecanvas",
   "version": "1.0.0",
-  "description": "",
+  "description": "ECanvas:用于构建canvas可控动画的JavaScript库",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"webpack-dev-server"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backgron/eCanvas.git"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.0",
-    "@babel/polyfill": "^7.8.3",
-    "@babel/preset-env": "^7.16.5",
-    "add-asset-html-webpack-plugin": "^3.1.3",
-    "babel": "^6.23.0",
-    "babel-loader": "^8.0.6",
-    "core-js": "^3.6.4",
-    "css-loader": "^3.4.2",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-loader": "^3.0.3",
-    "eslint-plugin-import": "^2.20.1",
-    "file-loader": "^5.0.2",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.2.0",
-    "less": "^3.11.1",
-    "less-loader": "^5.0.0",
-    "mini-css-extract-plugin": "^0.9.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "postcss-loader": "^3.0.0",
-    "postcss-preset-env": "^6.7.0",
-    "style-loader": "^1.1.3",
-    "terser-webpack-plugin": "^2.3.5",
-    "thread-loader": "^2.1.3",
-    "url-loader": "^3.0.0",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.3",
-    "workbox-webpack-plugin": "^5.0.0"
+  "bugs": {
+    "url": "https://github.com/backgron/eCanvas/issues"
   },
-  "dependencies": {
-    "@babel/plugin-transform-runtime": "^7.16.5",
-    "eslint-webpack-plugin": "^3.1.1",
-    "jquery": "^3.4.1"
-  },
-  "browserslist": {
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ],
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ]
-  },
-  "eslintConfig": {
-    "extends": "airbnb-base",
-    "env": {
-      "browser": true
-    }
-  },
-  "sideEffects": [
-    "*.css"
-  ]
+  "homepage": "https://github.com/backgron/eCanvas#readme"
 }
