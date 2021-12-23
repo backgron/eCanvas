@@ -695,6 +695,20 @@ class ERect extends MoveShape {
     init()
   }
 
+  //边界检测
+  isEdge(pattern: String) {
+    if (pattern === 'touch') {
+      if (this.hitType === 'AABB') {
+        if (this.x > 0 && this.x < (this.bind as ECanvas).w - this.width && this.y > 0 && this.y < (this.bind as ECanvas).h - this.height) {
+          return false
+        } else {
+          return true
+        }
+      }
+    }
+
+  }
+
 
 
   //绘画的方法
@@ -977,10 +991,7 @@ function isHit(element1: MoveShape, element2: MoveShape) {
 
 }
 
-//边界检测
-function isEdge(ele: MoveShape, width: number, height: number, pattern: number) {
 
-}
 
 
 

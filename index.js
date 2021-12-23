@@ -402,6 +402,84 @@ class MoveShape {
   removeEventListener(type, name) {
     this.eventType[type][name] = undefined
   }
+
+  //边缘检测
+  isEdge(pattern) {
+    // touch模式
+    if (pattern === 'touch') {
+      //  AABB图形
+      if (this.hitType === 'AABB') {
+        if (this.x > 0 && this.x < this.bind.w - this.width && this.y > 0 && this.y < this.bind.h - this.height) {
+          return false
+        } else {
+          return true
+        }
+      }
+      // Arc 图形
+      else if (this.hitType === "Arc") {
+        if (this.x > this.radius && this.x < this.bind.w - this.radius && this.y > this.radius && this.y < this.bind.h - this.radius) {
+          return false
+        } else {
+          return true
+        }
+      }
+      // Rect 图形
+      else if (this.hitType === 'Rect') {
+        let x = [this.pointO[0], this.pointX[0], this.pointY[0], this.pointXY[0]]
+        let y = [this.pointO[1], this.pointX[1], this.pointY[1], this.pointXY[1]]
+        let maxX = Math.max(...x)
+        let maxY = Math.max(...y)
+        let minX = Math.min(...x)
+        let minY = Math.min(...y)
+        console.log(minX)
+
+        if (minX > 0 && maxX < this.bind.w && minY > 0 && maxY < this.bind.h) {
+          return false
+        } else {
+          return true
+        }
+      }
+
+    }
+    //over模式
+    else if (pattern === 'over') {
+      // AABB图形
+      if (this.hitType === 'AABB') {
+        if (this.x < -this.width || this.x > this.bind.w || this.y < -this.height || this.y > this.bind.h) {
+          return true
+        } else {
+          return false
+        }
+      }
+
+      //Arc 图形
+      if (this.hitType === 'Arc') {
+        if (this.x < -this.radius || this.x > this.bind.w + this.radius || this.y < -this.radius || this.y > this.bind.h + this.radius) {
+          return true
+        } else {
+          return false
+        }
+      }
+
+      // Rect 图形
+      else if (this.hitType === 'Rect') {
+        let x = [this.pointO[0], this.pointX[0], this.pointY[0], this.pointXY[0]]
+        let y = [this.pointO[1], this.pointX[1], this.pointY[1], this.pointXY[1]]
+        let maxX = Math.max(...x)
+        let maxY = Math.max(...y)
+        let minX = Math.min(...x)
+        let minY = Math.min(...y)
+        console.log(minX)
+
+        if (maxX < 0 || minX > this.bind.w || maxY < 0 || minY > this.bind.h) {
+          return true
+        } else {
+          return false
+        }
+      }
+
+    }
+  }
 }
 
 /**可控矩形ERect
@@ -643,8 +721,6 @@ class ERect extends MoveShape {
     }
     init()
   }
-
-
 
   //绘画的方法
   draw(beforeDrow) {
@@ -918,10 +994,6 @@ function isHit(element1, element2) {
 
 }
 
-//边界检测
-function isEdge(ele, width, height, pattern) {
-
-}
 
 
 
