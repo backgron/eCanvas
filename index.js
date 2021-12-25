@@ -11,7 +11,7 @@
  * 
  *  */
 class ECanvas {
-  constructor(canvas) {
+  constructor(canvas, name = 'ECanvas') {
     this.canvas = canvas
     this.w = 0
     this.h = 0
@@ -34,7 +34,7 @@ class ECanvas {
     this.eventType = {}
     this.bind = true
 
-    this.name = 'ECanvas'
+    this.name
 
     this.init()
   }
@@ -273,7 +273,7 @@ class MoveShape {
     this.name = 'unnamed-MoveShape'
 
     //绘画的回调函数
-    this.beforeDrow
+    this.beforeDraw
 
     this.MoveShapeInit()
   }
@@ -723,9 +723,9 @@ class ERect extends MoveShape {
   }
 
   //绘画的方法
-  draw(beforeDrow) {
-    if (typeof beforeDrow === 'function') {
-      beforeDrow()
+  draw(beforeDraw) {
+    if (typeof beforeDraw === 'function') {
+      beforeDraw()
     }
     if (this.imgIsLoad) {
       this.ctx.translate(this.pointO[0], this.pointO[1])
@@ -756,7 +756,7 @@ class ERect extends MoveShape {
  * 
  */
 class EArc extends MoveShape {
-  constructor(x, y, radius, startAngle, endAngle, anticlockwise, style = 'fill', color = '#000') {
+  constructor(x, y, radius, startAngle = 0, endAngle = Math.PI * 2, anticlockwise = false, style = 'fill', color = '#000') {
     super()
     //基本信息
     this.x = x
@@ -777,9 +777,9 @@ class EArc extends MoveShape {
     this.beforDrow
   }
 
-  draw(beforeDrow) {
-    if (typeof beforeDrow === 'function') {
-      beforeDrow()
+  draw(beforeDraw) {
+    if (typeof beforeDraw === 'function') {
+      beforeDraw()
     }
     this.ctx.beginPath()
     this.ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise)
@@ -993,11 +993,6 @@ function isHit(element1, element2) {
   }
 
 }
-
-
-
-
-
 // 事件对象
 
 /**
